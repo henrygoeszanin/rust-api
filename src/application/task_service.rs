@@ -1,5 +1,6 @@
 use crate::domain::task::Task;
 use crate::infrastructure::task_repository::TaskRepository;
+use uuid::Uuid;
 
 #[derive(Clone)]
 pub struct TaskService<R: TaskRepository + Clone> {
@@ -17,5 +18,14 @@ impl<R: TaskRepository + Clone> TaskService<R> {
 
     pub async fn get_tasks(&self) -> Result<Vec<Task>, sqlx::Error> {
         self.repository.get_all().await
+    }
+
+    // Métodos adicionados:
+    pub async fn delete_task(&self, id: Uuid) -> Result<Task, sqlx::Error> {
+        self.repository.delete(id).await
+    }
+
+    pub async fn update_task(&self, id: Uuid, title: Option<String>, content: Option<String>) -> Result<Task, sqlx::Error> {
+        self.repository.update(id, title, content).await
     }
 }
