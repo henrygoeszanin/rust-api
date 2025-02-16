@@ -14,4 +14,8 @@ impl<R: TaskRepository + Clone> TaskService<R> {
     pub async fn create_task(&self, title: String, content: String) -> Result<Task, sqlx::Error> {
         self.repository.create(title, content).await
     }
+
+    pub async fn get_tasks(&self) -> Result<Vec<Task>, sqlx::Error> {
+        self.repository.get_all().await
+    }
 }

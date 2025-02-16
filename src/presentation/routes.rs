@@ -6,7 +6,7 @@ use crate::infrastructure::task_repository::TaskRepositoryImpl;
 
 #[derive(Clone)]
 pub struct AppState {
-    pub task_service: TaskService<TaskRepositoryImpl>
+    pub task_service: TaskService<TaskRepositoryImpl>,
 }
 
 #[derive(Deserialize)]
@@ -20,6 +20,7 @@ pub fn config(cfg: &mut web::ServiceConfig) {
         web::scope("/api")
             .route("/healthchecker", web::get().to(health_checker))
             .route("/task", web::post().to(create_task))
+            .route("/task", web::get().to(get_tasks)) // <-- rota GET adicionada
     );
 }
 
@@ -32,7 +33,7 @@ async fn health_checker() -> impl Responder {
 
 async fn create_task(
     dto: web::Json<CreateTaskDto>,
-    data: web::Data<AppState>
+    data: web::Data<AppState>,
 ) -> impl Responder {
     let result = data
         .task_service
@@ -40,13 +41,31 @@ async fn create_task(
         .await;
     
     match result {
-        Ok(task) => HttpResponse::Ok().json(serde_json::json!({
+        Ok(task) => HttpResponse::Created().json(serde_json::json!({
             "message": "Task created successfully",
             "status": 201,
             "task": task
         })),
         Err(e) => {
             eprintln!("Failed to create task: {}", e);
+            HttpResponse::InternalServerError().json(serde_json::json!({
+                "message": e.to_string(),
+                "status": 500
+            }))
+        }
+    }
+}
+
+async fn get_tasks(data: web::Data<AppState>) -> impl Responder {
+    let result = data.task_service.get_tasks().await;
+    match result {
+        Ok(tasks) => HttpResponse::Ok().json(serde_json::json!({
+            "message": "Tasks retrieved successfully",
+            "status": 200,
+            "tasks": tasks
+        })),
+        Err(e) => {
+            eprintln!("Failed to get tasks: {}", e);
             HttpResponse::InternalServerError().json(serde_json::json!({
                 "message": e.to_string(),
                 "status": 500
