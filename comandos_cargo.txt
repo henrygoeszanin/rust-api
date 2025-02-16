@@ -1,0 +1,32 @@
+# Atualiza as dependências do projeto
+cargo update
+
+# Compila o projeto em modo debug
+cargo build
+
+# Executa o projeto compilado
+cargo run
+
+# Observa alterações na pasta "src" e reexecuta o projeto automaticamente
+cargo watch -q -c -w src/ -x run
+
+# Roda os testes automatizados
+cargo test
+
+# Verifica o código sem gerar binários (útil para identificar erros de compilação mais rápido)
+cargo check
+
+# Analisa o código estático com o linter Clippy para detectar problemas comuns
+cargo clippy
+
+# Formata o código-fonte de acordo com o padrão Rust
+cargo fmt
+
+# Gera a documentação do projeto e a abre no navegador
+cargo doc --open
+
+# Executa benchmarks (se houverem no projeto)
+cargo bench
+
+# Compila o projeto em modo release (para otimizações finais)
+cargo build --release
