@@ -5,6 +5,7 @@ edition = "2021"
 
 [dependencies]
 actix = "0.13.5"
+async-trait = "0.1"
 actix-web = "4.9"
 chrono = { version = "0.4.22", features = ["serde"] }  # Corrigido "chromo" para "chrono"
 dotenv = "0.15.0"
